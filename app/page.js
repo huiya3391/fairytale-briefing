@@ -14,7 +14,7 @@ export default function Home() {
   });
 
   function handleCodeSubmit() {
-    if (codeInput.trim().toUpperCase() === (process.env.NEXT_PUBLIC_ACCESS_CODE || "FAIRY2026")) {
+if (codeInput.trim().toLowerCase() === (process.env.NEXT_PUBLIC_ACCESS_CODE || "FAIRY2026").toLowerCase()) {
       setIsAuthed(true);
       setCodeError("");
     } else {
