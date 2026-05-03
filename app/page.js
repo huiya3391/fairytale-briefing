@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Home() {
   const [isAuthed, setIsAuthed] = useState(false);
@@ -10,11 +10,20 @@ export default function Home() {
   const [errorMsg, setErrorMsg] = useState("");
 
   const today = new Date().toLocaleDateString("ko-KR", {
-    year: "numeric", month: "long", day: "numeric", weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "long",
   });
 
+  // 접근 코드 제출 핸들러
   function handleCodeSubmit() {
-if (codeInput.trim().toLowerCase() === (process.env.NEXT_PUBLIC_ACCESS_CODE || "FAIRY2026").toLowerCase()) {
+    // 1. Vercel 환경 변수에서 값을 가져옴 (없을 경우 기본값 FAIRY2026 사용)
+    // .trim()으로 공백을 제거하고 .toLowerCase()로 소문자 통일하여 비교합니다.
+    const targetCode = (process.env.NEXT_PUBLIC_ACCESS_CODE || "FAIRY2026").trim().toLowerCase();
+    const userEntered = codeInput.trim().toLowerCase();
+
+    if (userEntered === targetCode) {
       setIsAuthed(true);
       setCodeError("");
     } else {
@@ -23,6 +32,7 @@ if (codeInput.trim().toLowerCase() === (process.env.NEXT_PUBLIC_ACCESS_CODE || "
     }
   }
 
+  // 브리핑 생성 함수
   async function generateBriefing() {
     setStatus("generating");
     setBriefing("");
@@ -43,6 +53,7 @@ if (codeInput.trim().toLowerCase() === (process.env.NEXT_PUBLIC_ACCESS_CODE || "
     }
   }
 
+  // 노션 저장 함수
   async function saveToNotion() {
     setStatus("sending");
     setErrorMsg("");
@@ -76,6 +87,7 @@ if (codeInput.trim().toLowerCase() === (process.env.NEXT_PUBLIC_ACCESS_CODE || "
     hint: { textAlign: "center", marginTop: 10, fontSize: 12, color: "#aaaacc" },
   };
 
+  // 로그인 화면
   if (!isAuthed) {
     return (
       <div style={{ ...S.wrap, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
@@ -94,7 +106,8 @@ if (codeInput.trim().toLowerCase() === (process.env.NEXT_PUBLIC_ACCESS_CODE || "
               </div>
             </div>
             <input
-              type="text" placeholder="접근 코드 입력"
+              type="text"
+              placeholder="접근 코드 입력"
               value={codeInput}
               onChange={e => setCodeInput(e.target.value)}
               onKeyDown={e => e.key === "Enter" && handleCodeSubmit()}
@@ -108,6 +121,7 @@ if (codeInput.trim().toLowerCase() === (process.env.NEXT_PUBLIC_ACCESS_CODE || "
     );
   }
 
+  // 메인 콘텐츠 화면 (인증 성공 시)
   return (
     <div style={S.wrap}>
       <div style={S.header}>
